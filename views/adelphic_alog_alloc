@@ -1,0 +1,83 @@
+
+Algo allocation
+BiddingAlogServiceImopl
+
+
+1 -> datamodel /setup/database.schema
+
+ --> add procedure with schema update increase a number
+
+ --> udpate mysql
+
+2 -> in matamodel (autogenerate model) 
+		mvn clean install
+
+3 ->  dcm-client.thrif
+	extends struct with new field
+
+
+ 
+	SELECT * FROM CI_ADELPHIC_DATA_FEES -> CI_ADELPHIC_DATA_FEES need both entry CI_DATA_PROVIDER_FEES for 529
+	SELECT * FROM CI_DATA_PROVIDER_FEES
+
+
+	Data fees
+
+
+	DATA_PROVIDER_FEE -> how much we pay provider
+	Lookup UP -> targeting namespace   529 -> viant segment provider - if add taret the key
+	DDATA_ELEMENT_ID -> cost on segment level  
+
+
+	SELECT * FROM CI_DATA_PROVIDER_FEES -> CPM goes to adveriser
+
+
+	Compssions -> Agency lvel
+
+
+			getAdditionalFee
+	
+
+
+
+	Fee add Canmpaign, AdOrder, Audience level
+
+
+		public Set<DataProviderFee> getAdelphicDataFees();
+	
+		public Set<AdServingFee> getAdServingFees();
+
+
+	Generic Fee
+
+		-> AdServingFee
+
+	AdOrderService -> fixed fee
+
+
+
+	dataServiceProvider -> 
+	adServieFee -> generic fees
+
+
+		CI_FEE_TYPE
+	SELECT * FROM CI_FEE_TYPE_SCHEDULE
+	CI_CREATIE_FEE
+
+
+	Creatve, Cross Device 			 ->
+	Cross device fee ->
+
+
+ 	adelphic fee -> base fee
+
+ 	max fee for the segment
+
+
+
+ 	IAS fee -> FEE_TYPE_SCHDULE. FEE(REVENUE)  PARTNER_FEE (COST)
+ 	-> AdServingFee
+
+
+
+

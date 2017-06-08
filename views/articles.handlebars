@@ -1,0 +1,48 @@
+
+<div class="row" id="article-list">
+
+  <div class="col-md-1"></div>
+  <div class="col-md-7">
+	<div class="panel-group">
+
+	  	{{#each articles}}
+			 <div class="panel panel-default article-row"  >
+              	<div class="panel-heading caption">
+                	<h3>  
+
+
+
+                		<a href="{{this.link}}">{{this.title}} </a>
+						<span class="pull-right"><button  data-id="{{this._id}}" class="removeButton btn btn-danger">Remove</button></span></small>
+           
+                	</h3>
+                
+			     </div>
+                <div class="panel-body">
+                    {{this.content}}
+              </div>
+              <div class="row">
+
+               <div class="col-md-5"></div>
+			  <div class="col-md-4">
+				<button class="btn btn-md btn-success" id="createComment">Add Comment</button>
+	  		</div>
+
+              		
+              		{{#each articles.comments}}
+
+              		{{/each}}
+
+              	</div>
+    	    </div><!-- panel event-row -->
+		{{/each}}
+
+  </div> <!-- panel-group -->
+  </div> <!-- col-md-7 -->
+
+  <div class="col-md-3">
+	  <div id="event-detail"></div>
+  </div>
+  <div class="col-md-1"></div>
+
+</div> <!-- row --!>
