@@ -9,32 +9,51 @@
 			 <div class="panel panel-default article-row"  >
               	<div class="panel-heading caption">
                 	<h3>  
-
-
-
                 		<a href="{{this.link}}">{{this.title}} </a>
-						<span class="pull-right"><button  data-id="{{this._id}}" class="removeButton btn btn-danger">Remove</button></span></small>
-           
+						<small><span class="pull-right"><button  data-id="{{this._id}}" class="removeButton btn btn-danger">Remove</button></span></small>
                 	</h3>
                 
-			     </div>
+			         </div>
                 <div class="panel-body">
                     {{this.content}}
               </div>
+
+
+          <div class="row">
+               <div class="col-md-12 text-center"><h4>Comments</h4></div>
+                
+             </div>
+          
+        {{#each this.comments}}
+                    <div class="row">
+                      <div class="panel-body">
+                      <span class="text-center col-md-9"> 
+                       {{this.body}}</span>
+                        <small>
+                        <span class="pull-right"><button  data-id="{{this._id}}" class="removeCommentButton btn btn-danger">X</button></span></small>
+                   </div>
+                   </div>
+                  {{/each}}
+
+
               <div class="row">
+                 <div class="col-md-1"></div>
+                 <div class="col-md-7">
+                    <textarea id="comment-{{this._id}}"  class="form-control" rows="2" ></textarea>
+                 </div>
+          
+                <div class="col-md-3">
+                    <button class="addCommentdButton btn btn-md btn-success" data-id="{{this._id}}" >Add Comment</button>
+               </div>
+              
+              </div>
 
-               <div class="col-md-5"></div>
-			  <div class="col-md-4">
-				<button class="btn btn-md btn-success" id="createComment">Add Comment</button>
-	  		</div>
 
-              		
-              		{{#each articles.comments}}
-
-              		{{/each}}
-
-              	</div>
     	    </div><!-- panel event-row -->
+
+          
+
+
 		{{/each}}
 
   </div> <!-- panel-group -->

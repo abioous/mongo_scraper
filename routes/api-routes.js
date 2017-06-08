@@ -7,9 +7,43 @@ var cheerio = require("cheerio");
 
 
 var Article = require("./../models/article.js");
+var Comment = require("./../models/comment.js");
 
 
 
+
+//addIfNeeded adds article if it does not exists in database
+function addIfNeeded(article) {
+    Article.count({ "link": article['link'] }, function( err, count){
+       if (err) {
+            thorw(err);
+        }    
+        //this article exists since we were able to find entry in store
+        if(count != 0) {
+            return;
+        }
+          // Using our Article model, create a new entry
+          // This effectively passes the result object to the entry (and the title and link)
+        var entry = new Article(article);
+              // Now, save that entry to the db
+              entry.save(function(err, doc) {
+                // Log any errors
+                if (err) {
+                    console.log(err);
+                }
+              });
+        });
+}
+
+function countNewArticles(articles, callback) {
+    var links = [];
+    for(var i = 0;i<articles.length;i++) {
+        links.push(articles[i].link)
+    }
+    Article.count({ "link": { $in: links }  }, function(err, count){
+        callback(articles.length - count);
+    })
+}
 
 
 //screape reads time.com home page to extract articles.
@@ -31,7 +65,6 @@ function scrape(callback) {
                             //the article content is extracted from div p element
                             var content =  $(element).find($("div p")).text();
 
-                        
                             articles.push({
                                 'title':title,
                                 'link':href,
@@ -51,55 +84,21 @@ module.exports = function (app) {
     //GET  route for scraping  all articles
     app.get("/api/scrape", function (req, res) {
             scrape(function(articles) {
-
-                console.log(articles);
-
-               var newCount = 0;
+                countNewArticles(articles, function(count) {
+                  res.json({
+                    'added': count, 
+                  });
+                })
                 for(var i = 0;i<articles.length;i++) {
-                    
-                    var article = articles[i];
-
-                        var addIfNeeded = function(article) {
-                            Article.count({ "link": article['link'] }, function( err, count){
-                               if (err) {
-                                    thorw(err);
-                                }
-
-                                //if article linkg does not exists create anew article
-                                if(count == 0) {
-                                  newCount++
-                                  
-                                  console.log('adding article')
-                                  console.log(articles[i]);
-
-                                  // Using our Article model, create a new entry
-                                  // This effectively passes the result object to the entry (and the title and link)
-                                var entry = new Article(articles[i]);
-                                      // Now, save that entry to the db
-                                      entry.save(function(err, doc) {
-                                        // Log any errors
-                                        if (err) {
-                                            console.log(err);
-                                        }
-                                      });
-                                }
-                             });
-                      }
-                      addIfNeeded(a)
+                   addIfNeeded(articles[i])
                 }
-                res.json({
-                  'articles': articles, 
-                });
             })
     })
-
 
     
     // This will get the articles we scraped from the mongoDB
     app.get("/api/articles", function(req, res) {
-      
-        console.log('reading articles');
-
+  
       // Grab every doc in the Articles array
       Article.find({}, function(error, doc) {
         // Log any errors
@@ -107,12 +106,12 @@ module.exports = function (app) {
           console.log(error);
         }
         // Or send the doc to the browser as a json object
-        else {
-          res.json(doc);
-        }
-      });
-    });
+       
+      }).populate("comments").exec(function(error, doc) {
+           res.json(doc);
+      })
 
+    });
 
 
      // Grab an article by it's ObjectId
@@ -139,13 +138,11 @@ module.exports = function (app) {
     app.delete("/api/articles/:id", function(req, res) {
       // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
       Article.findOneAndRemove(req.params.id, function (err, doc) {
-          
-          console.log('removing ' + req.params.id)
           if(err) {
               console.log(err);
           } else {
-              console.log(doc)
-
+            console.log('removed - sending status back')    
+            res.json({status:'ok'})
           }
 
       });
@@ -153,22 +150,53 @@ module.exports = function (app) {
 
 
 
+    // Grab an article by it's ObjectId to add comment
+    app.post("/api/articles/:id/comment", function(req, res) {
 
- // story1.save(function (err) {
- //    if (err) return handleError(err);
- //    // thats it!
- //  });
- //  //then add story to person
- //  aaron.stories.push(story1);
- //  aaron.save(callback);
+      // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+      Article.find({ "_id": req.params.id }, function(err, articles) {
+            //create new comment document
+             var entry = new Comment({
+                'body':req.body.comment,
+             });
+              // Now, save that entry to the db
+              entry.save(function(err, doc) {
+                // Log any errors
+                if (err) {
+                    console.log(err);
+                } else  {
+                    var article = articles[0];
+                    //append comment to 
+                    article.comments.push(entry);
+                    article.save(function(err) {
+                        if(err != null) {
+                          console.log(err)
+                        } else {
+                            res.json({status:'ok'})
+                        }
+                    })
+                }
+              });
+      });
+  
+  })
 
 
 
-// FBFriendModel.find({
-//     id: 333
-// }, function (err, docs) {
-//     docs.remove(); //Remove all the documents that match!
-// });
+     // Grab an article by it's ObjectId
+    app.delete("/api/comment/:id", function(req, res) {
+      // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+      Comment.findOneAndRemove(req.params.id, function (err, doc) {
+          if(err) {
+              console.log(err);
+          } else {
+              res.json({status:'ok'})
+          }
+
+      });
+    });
+
+   
 
 // Create a new note or replace an existing note
 app.post("/api//articles/:id", function(req, res) {

@@ -20,13 +20,13 @@
 	<body>
 
 	<ul class="nav nav-tabs">
-	  <li {{#home}}class="active"{{/home}}  role="presentation"><a href="/">Home</a></li>
-	  <li {{#articles}}class="active"{{/articles}}  role="presentation"><a href="/articles">Saved Articles</a></li>
+	  <li {{#if home}}class="active"{{/if}}  role="presentation"><a href="/">Home</a></li>
+	  <li {{#if articles}}class="active"{{/if}}  role="presentation"><a href="/articles">Saved Articles</a></li>
 	  <li>
 	  <button id="scrapteButton" type="button" class="btn btn-info navbar-btn">Scrape Articles</button>
 	  </li>
 	</ul>
-
+		 	{{#if added}}<h3 class="text-center">Added {{addedCount}} Articles</h3>{{/if}}
 
 		{{{ body }}}
 	</body>

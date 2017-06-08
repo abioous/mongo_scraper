@@ -9,10 +9,6 @@ var Schema = mongoose.Schema;
 // Create the Comment schema
 var CommentSchema = new Schema({
   // Just a string
-  title: {
-    type: String
-  },
-  // Just a string
   body: {
     type: String
   }
@@ -20,8 +16,8 @@ var CommentSchema = new Schema({
 
 
 // Create the Commennt model with the CommentSchema
-var Commennt = mongoose.model("Commennt", CommentSchema);
+var Comment = mongoose.model("Comment", CommentSchema);
 
 // Export the Note model
-module.exports = Commennt;
+module.exports = Comment;
 
